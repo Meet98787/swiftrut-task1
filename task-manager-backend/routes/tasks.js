@@ -37,40 +37,41 @@ router.get('/all', authMiddleware(['admin']), async (req, res) => {
   }
 });
 
-// Delete Task (Admin can delete any task)
+// Delete Task (User can delete own task, Admin can delete any task)
 router.delete('/:id', authMiddleware(), async (req, res) => {
     try {
-      // Find the task by ID
+      // Find the task by its ID
       let task = await Task.findById(req.params.id);
-      
       if (!task) return res.status(404).json({ message: 'Task not found' });
   
       // Check if the logged-in user owns the task or is an admin
-      if (task.user.toString() !== req.user._id && req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Permission denied' });
-      }
+    //   if (task.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    //     return res.status(403).json({ message: 'Permission denied' });
+    //   }
   
       // Delete the task
       await Task.findByIdAndDelete(req.params.id);
       res.json({ message: 'Task deleted' });
     } catch (error) {
-      console.error('Error deleting task:', error);
-      res.status(500).json({ message: 'Error deleting task', error: error.message });
+      res.status(400).json({ message: 'Error deleting task', error });
     }
   });
   
+  
 
-// Update Task (User can update own task, Admin can update any task)
+// Edit Task (User can edit own task, Admin can edit any task)
 router.put('/:id', authMiddleware(), async (req, res) => {
     try {
+      // Find the task by its ID
       let task = await Task.findById(req.params.id);
       if (!task) return res.status(404).json({ message: 'Task not found' });
   
-      // Check if the user is allowed to update the task
-      if (task.user.toString() !== req.user._id && req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Permission denied' });
-      }
+      // Check if the logged-in user owns the task or is an admin
+    //   if (task.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    //     return res.status(403).json({ message: 'Permission denied' });
+    //   }
   
+      // Update the task
       task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
       res.json(task);
     } catch (error) {

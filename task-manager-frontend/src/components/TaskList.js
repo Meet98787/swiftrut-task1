@@ -5,13 +5,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import TaskForm from './TaskForm';
+import { useNavigate } from 'react-router-dom';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [editingTask, setEditingTask] = useState(null); // State to track editing task
+  const [editingTask, setEditingTask] = useState(null);  // State to track editing task
   const { token } = useContext(AuthContext);  // Get token from context
 
-  // Fetch tasks from backend
+  const { logout} = useContext(AuthContext);  // Get user from context
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();  // Call logout from context
+        navigate('/login');  // Redirect to login after logout
+    };
+
+  // Fetch tasks for the logged-in user
   const fetchTasks = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/tasks', {
@@ -33,7 +41,7 @@ const TaskList = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      fetchTasks(); // Refresh task list after deletion
+      fetchTasks();  // Refresh task list after deletion
     } catch (error) {
       console.error('Failed to delete task:', error);
     }
@@ -41,12 +49,11 @@ const TaskList = () => {
 
   // Edit task
   const editTask = (task) => {
-    setEditingTask(task); // Set task to be edited
+    setEditingTask(task);  // Set task to be edited
   };
 
-  // Fetch tasks on component mount
   useEffect(() => {
-    fetchTasks();
+    fetchTasks();  // Fetch user tasks on component mount
   }, []);
 
   return (
@@ -54,6 +61,7 @@ const TaskList = () => {
       <Typography variant="h4" gutterBottom>
         My Tasks
       </Typography>
+      <button onClick={handleLogout}>Logout</button>
 
       {/* Render TaskForm for creating or editing tasks */}
       <TaskForm fetchTasks={fetchTasks} editingTask={editingTask} setEditingTask={setEditingTask} />

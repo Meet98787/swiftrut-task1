@@ -19,11 +19,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', { username, password });
       const token = response.data.token;
+      const user = response.data;  // Assuming your backend returns the user object with role
+
       setToken(token);
       localStorage.setItem('token', token);
-      setUser(response.data.user);  // You can also store user data if needed
+      setUser(user);  // Set the user object in state
+
+      return user;  // Return the user object for further use (e.g., redirecting based on role)
     } catch (error) {
-      console.error('Login failed', error);
+      console.error('Login failed:', error);
+      throw error;
     }
   };
 

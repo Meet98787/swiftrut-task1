@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -8,8 +9,9 @@ import TaskForm from './TaskForm';
 
 const AdminTaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [editingTask, setEditingTask] = useState(null);  // State to track editing task
-  const { token, user } = useContext(AuthContext);  // Get token and user from context
+  const [editingTask, setEditingTask] = useState(null);
+  const { token, user, logout } = useContext(AuthContext);  // Get token, user, and logout from context
+  const navigate = useNavigate();
 
   // Fetch all tasks for admin
   const fetchAllTasks = async () => {
@@ -19,9 +21,9 @@ const AdminTaskList = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setTasks(response.data);  // Set the tasks for admin
+      setTasks(response.data);
     } catch (error) {
-      console.error('Failed to fetch tasks for admin:', error);
+      console.error('Failed to fetch tasks:', error);
     }
   };
 
@@ -44,6 +46,12 @@ const AdminTaskList = () => {
     setEditingTask(task);  // Set task to be edited
   };
 
+  // Handle logout
+  const handleLogout = () => {
+    logout();  // Call logout from context
+    navigate('/login');  // Redirect to login after logout
+  };
+
   useEffect(() => {
     if (user && user.role === 'admin') {
       fetchAllTasks();  // Fetch all tasks if user is admin
@@ -56,6 +64,9 @@ const AdminTaskList = () => {
         Admin Dashboard - All Tasks
       </Typography>
 
+      {/* Logout Button */}
+      <button onClick={handleLogout}>Logout</button>
+
       {/* Render TaskForm for creating or editing tasks */}
       <TaskForm fetchTasks={fetchAllTasks} editingTask={editingTask} setEditingTask={setEditingTask} />
 
@@ -66,10 +77,12 @@ const AdminTaskList = () => {
               primary={task.title}
               secondary={`Created by: ${task.user?.username || 'Unknown'} - ${task.description}`}
             />
-            {/* Edit and Delete icons */}
+            {/* Edit Icon */}
             <IconButton edge="end" aria-label="edit" onClick={() => editTask(task)}>
               <EditIcon />
             </IconButton>
+
+            {/* Delete Icon */}
             <IconButton edge="end" aria-label="delete" onClick={() => deleteTask(task._id)}>
               <DeleteIcon />
             </IconButton>
