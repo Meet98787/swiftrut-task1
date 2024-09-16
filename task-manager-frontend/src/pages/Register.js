@@ -20,7 +20,7 @@ const Register = () => {
   };
 
   return (
-    <Container>
+    <Container className='shadow-lg p-5 mt-5'>
       <Typography variant="h4">Register</Typography>
       <form onSubmit={handleSubmit}>
         <TextField

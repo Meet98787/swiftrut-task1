@@ -68,7 +68,7 @@ const TaskList = () => {
 
       <List>
         {tasks.map((task) => (
-          <ListItem key={task._id}>
+          <ListItem key={task._id} className='shadow-lg p-5 mt-5'>
             <ListItemText primary={task.title} secondary={task.description} />
             
             {/* Edit Icon */}

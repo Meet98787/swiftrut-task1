@@ -72,7 +72,7 @@ const AdminTaskList = () => {
 
       <List>
         {tasks.map((task) => (
-          <ListItem key={task._id}>
+          <ListItem key={task._id} className='shadow-lg p-5 mt-5'>
             <ListItemText
               primary={task.title}
               secondary={`Created by: ${task.user?.username || 'Unknown'} - ${task.description}`}

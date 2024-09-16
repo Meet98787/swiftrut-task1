@@ -26,7 +26,7 @@ const Login = () => {
   };
 
   return (
-    <Container>
+    <Container className='shadow-lg p-5 mt-5'>
       <Typography variant="h4" gutterBottom>
         Login
       </Typography>

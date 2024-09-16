@@ -58,7 +58,7 @@ const TaskForm = ({ fetchTasks, editingTask, setEditingTask }) => {
   };
 
   return (
-    <Container>
+    <Container className='shadow-lg p-5 mt-5'>
       <Typography variant="h5" gutterBottom>
         {editingTask ? 'Edit Task' : 'Create Task'}
       </Typography>
