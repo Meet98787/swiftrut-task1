@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import TaskList from './components/TaskList';
+import AuthContext from './context/AuthContext';
+import Dashboard from './pages/Dashboard';
 
-function App() {
+const App = () => {
+  const { token } = useContext(AuthContext);  // Get token from AuthContext
+
+  // Protected Route: Redirect to login if not authenticated
+  const ProtectedRoute = ({ children }) => {
+    return token ? children : <Navigate to="/login" />;
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        
+        {/* Default Route: Redirect to dashboard if authenticated */}
+        <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
