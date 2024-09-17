@@ -43,4 +43,14 @@ router.put('/role/:id', authMiddleware(['admin']), async (req, res) => {
   }
 });
 
+// Admin: Get all users
+router.get('/all', authMiddleware(['admin']), async (req, res) => {
+    try {
+      const users = await User.find({}, '-password');  // Exclude the password field
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching users', error });
+    }
+  });
+
 module.exports = router;

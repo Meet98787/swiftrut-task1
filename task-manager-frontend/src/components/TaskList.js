@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Container, Typography, List, ListItem, ListItemText, IconButton,Button  } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
@@ -52,6 +52,20 @@ const TaskList = () => {
     setEditingTask(task);  // Set task to be edited
   };
 
+    // Mark task as completed
+    const completeTask = async (taskId) => {
+        try {
+          await axios.patch(`http://localhost:5000/api/tasks/${taskId}/complete`, {}, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          fetchTasks();  // Refresh task list after completion
+        } catch (error) {
+          console.error('Failed to complete task:', error);
+        }
+      };
+    
   useEffect(() => {
     fetchTasks();  // Fetch user tasks on component mount
   }, []);
@@ -67,9 +81,19 @@ const TaskList = () => {
       <TaskForm fetchTasks={fetchTasks} editingTask={editingTask} setEditingTask={setEditingTask} />
 
       <List>
-        {tasks.map((task) => (
-          <ListItem key={task._id} className='shadow-lg p-5 mt-5'>
-            <ListItemText primary={task.title} secondary={task.description} />
+      {tasks.map((task) => (
+          <ListItem key={task._id}>
+            <ListItemText
+              primary={task.title}
+              secondary={`${task.description} - ${task.completed ? 'Completed' : 'Incomplete'}`}
+            />
+            
+            {/* Complete Task Button */}
+            {!task.completed && (
+              <Button variant="contained" color="success" onClick={() => completeTask(task._id)}>
+                Mark as Completed
+              </Button>
+            )}
             
             {/* Edit Icon */}
             <IconButton edge="end" aria-label="edit" onClick={() => editTask(task)}>

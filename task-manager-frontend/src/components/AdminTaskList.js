@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import TaskForm from './TaskForm';
+import AllUsers from './AllUsers';
 
 const AdminTaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -63,6 +64,8 @@ const AdminTaskList = () => {
       <Typography variant="h4" gutterBottom>
         Admin Dashboard - All Tasks
       </Typography>
+
+      <AllUsers />
 
       {/* Logout Button */}
       <button onClick={handleLogout}>Logout</button>
